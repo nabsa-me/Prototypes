@@ -1,0 +1,4 @@
+package-lock.json
+# Data kept exactly as received: recorded service payloads and client datasets.
+**/fixtures/**
+**/*.geojson
