@@ -1,0 +1,17 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "ruta",
+      "geometry": { "type": "LineString", "coordinates": [[448464.5, 4623870.7]] },
+      "properties": { "name": "Ruta d'una sola posició" }
+    },
+    {
+      "type": "Feature",
+      "id": "mirador-02",
+      "geometry": { "type": "Point", "coordinates": ["449465.0", 4624420.3] },
+      "properties": { "name": "Coordenada en text" }
+    }
+  ]
+}

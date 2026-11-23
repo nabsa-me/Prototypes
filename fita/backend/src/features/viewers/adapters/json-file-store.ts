@@ -1,5 +1,5 @@
-import { readFile } from 'node:fs/promises';
-import type { ViewerConfigStore } from '../ports.ts';
+import { readdir, readFile } from 'node:fs/promises';
+import type { DatasetFiles, ViewerConfigStore } from '../ports.ts';
 
 /**
  * Reads `<directory>/<id>.json`. The caller must pass a validated slug as `id`;
@@ -17,6 +17,21 @@ export function createJsonFileViewerStore(directory: URL): ViewerConfigStore {
       }
       return JSON.parse(text) as unknown;
     },
+
+    async listIds() {
+      const names = await readdir(directory);
+      return names
+        .filter((name) => name.endsWith('.json'))
+        .map((name) => name.slice(0, -'.json'.length))
+        .sort();
+    },
+  };
+}
+
+/** Reads dataset files next to the configurations. `file` comes from a validated config. */
+export function createDatasetFiles(directory: URL): DatasetFiles {
+  return {
+    read: (file) => readFile(new URL(file, directory), 'utf8'),
   };
 }
 

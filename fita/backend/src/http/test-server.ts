@@ -12,7 +12,14 @@ const notUsedSync = (): never => {
 export function buildTestServer(overrides: Partial<Omit<ServerDeps, 'logger'>> = {}) {
   return buildServer({
     logger: false,
-    viewers: { store: { read: notUsed } },
+    viewers: {
+      store: { read: notUsed, listIds: notUsed },
+      datasets: {
+        importedFingerprint: notUsedSync,
+        replace: notUsedSync,
+        findIntersecting: notUsedSync,
+      },
+    },
     pointInfo: { territory: { locate: notUsed }, geocoder: { reverse: notUsed } },
     search: { places: { autocomplete: notUsed } },
     reports: {

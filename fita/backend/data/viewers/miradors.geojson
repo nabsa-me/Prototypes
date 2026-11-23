@@ -1,0 +1,264 @@
+{
+  "type": "FeatureCollection",
+  "name": "Ruta dels miradors — dades fictícies",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "mirador-01",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          448464.5,
+          4623870.7
+        ]
+      },
+      "properties": {
+        "name": "Mirador del Coll Ventós",
+        "description": "Vista oberta cap a la plana del Vallès.",
+        "kind": "viewpoint"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "mirador-02",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          449465.9,
+          4624418.7
+        ]
+      },
+      "properties": {
+        "name": "Mirador de la Font Freda",
+        "description": "Balcó sobre la fageda, ideal a la tardor.",
+        "kind": "viewpoint"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "mirador-03",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          450549.8,
+          4624910.8
+        ]
+      },
+      "properties": {
+        "name": "Mirador del Pla de les Garbes",
+        "description": "Prats d'alçada amb el Matagalls al fons.",
+        "kind": "viewpoint"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "mirador-04",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          451633.6,
+          4625403.0
+        ]
+      },
+      "properties": {
+        "name": "Mirador de la Roca Esberlada",
+        "description": "Roca partida amb vista a les valls del nord.",
+        "kind": "viewpoint"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "mirador-05",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          452633.1,
+          4625729.4
+        ]
+      },
+      "properties": {
+        "name": "Mirador del Castanyer Vell",
+        "description": "Castanyer centenari al costat del camí.",
+        "kind": "viewpoint"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "mirador-06",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          453628.8,
+          4625500.8
+        ]
+      },
+      "properties": {
+        "name": "Mirador de la Collada Ampla",
+        "description": "Pas obert entre dues carenes.",
+        "kind": "viewpoint"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "mirador-07",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          454371.8,
+          4624718.8
+        ]
+      },
+      "properties": {
+        "name": "Mirador del Turó Rodó",
+        "description": "El punt més alt de la ruta.",
+        "kind": "viewpoint"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "mirador-08",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          454032.9,
+          4623721.7
+        ]
+      },
+      "properties": {
+        "name": "Mirador de les Agulles Blanques",
+        "description": "Agulles de granit sobre el torrent.",
+        "kind": "viewpoint"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "mirador-09",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          453031.1,
+          4623062.0
+        ]
+      },
+      "properties": {
+        "name": "Mirador del Sot Fosc",
+        "description": "Fondalada humida amb molsa i falgueres.",
+        "kind": "viewpoint"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "mirador-10",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          451781.9,
+          4622737.3
+        ]
+      },
+      "properties": {
+        "name": "Mirador de la Font del Faig",
+        "description": "Font fresca a l'ombra d'un faig gran.",
+        "kind": "viewpoint"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "mirador-11",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          450535.6,
+          4622856.8
+        ]
+      },
+      "properties": {
+        "name": "Mirador del Bac de l'Om",
+        "description": "Obaga amb vista al pantà llunyà.",
+        "kind": "viewpoint"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "mirador-12",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          449291.8,
+          4623309.6
+        ]
+      },
+      "properties": {
+        "name": "Mirador de la Serra Llarga",
+        "description": "Darrer mirador abans de tornar al coll.",
+        "kind": "viewpoint"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ruta",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            448464.5,
+            4623870.7
+          ],
+          [
+            449465.9,
+            4624418.7
+          ],
+          [
+            450549.8,
+            4624910.8
+          ],
+          [
+            451633.6,
+            4625403.0
+          ],
+          [
+            452633.1,
+            4625729.4
+          ],
+          [
+            453628.8,
+            4625500.8
+          ],
+          [
+            454371.8,
+            4624718.8
+          ],
+          [
+            454032.9,
+            4623721.7
+          ],
+          [
+            453031.1,
+            4623062.0
+          ],
+          [
+            451781.9,
+            4622737.3
+          ],
+          [
+            450535.6,
+            4622856.8
+          ],
+          [
+            449291.8,
+            4623309.6
+          ],
+          [
+            448464.5,
+            4623870.7
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Ruta dels miradors",
+        "description": "Itinerari circular de 12 miradors.",
+        "kind": "route"
+      }
+    }
+  ]
+}

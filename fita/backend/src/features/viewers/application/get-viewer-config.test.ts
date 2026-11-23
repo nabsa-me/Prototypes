@@ -15,7 +15,7 @@ const config = {
 };
 
 function storeWith(documents: Record<string, unknown>): ViewerConfigStore {
-  return { read: async (id) => documents[id] };
+  return { read: async (id) => documents[id], listIds: async () => Object.keys(documents) };
 }
 
 describe('getViewerConfig', () => {

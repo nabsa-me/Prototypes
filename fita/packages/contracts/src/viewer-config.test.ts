@@ -34,6 +34,26 @@ describe('ViewerConfigSchema', () => {
     expect(ViewerConfigSchema.parse(valid)).toEqual(valid);
   });
 
+  it('accepts branding and a dataset in either supported CRS', () => {
+    for (const crs of ['EPSG:25831', 'EPSG:4326']) {
+      const config = {
+        ...valid,
+        branding: { primaryColor: '#b4462b', brandText: 'Client' },
+        dataset: { file: 'route-points.geojson', crs },
+      };
+      expect(ViewerConfigSchema.safeParse(config).success).toBe(true);
+    }
+  });
+
+  it.each([
+    ['an unsupported CRS', { dataset: { file: 'a.geojson', crs: 'EPSG:3857' } }],
+    ['a dataset path with folders', { dataset: { file: '../a.geojson', crs: 'EPSG:4326' } }],
+    ['a dataset that is not .geojson', { dataset: { file: 'a.json', crs: 'EPSG:4326' } }],
+    ['a colour name', { branding: { primaryColor: 'red', brandText: 'Client' } }],
+  ])('rejects %s', (_label, extra) => {
+    expect(ViewerConfigSchema.safeParse({ ...valid, ...extra }).success).toBe(false);
+  });
+
   it('accepts a configuration without terrain', () => {
     const { terrain: _terrain, ...withoutTerrain } = valid;
     expect(ViewerConfigSchema.safeParse(withoutTerrain).success).toBe(true);

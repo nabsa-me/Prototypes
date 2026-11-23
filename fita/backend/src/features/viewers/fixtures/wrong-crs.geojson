@@ -1,0 +1,11 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "mirador-01",
+      "geometry": { "type": "Point", "coordinates": [2.38, 41.765] },
+      "properties": { "name": "Coordenades WGS84 declarades com a EPSG:25831" }
+    }
+  ]
+}

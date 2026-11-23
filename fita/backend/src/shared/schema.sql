@@ -21,3 +21,30 @@ CREATE INDEX IF NOT EXISTS reports_by_status ON reports (status, created_at);
 CREATE VIRTUAL TABLE IF NOT EXISTS report_locations USING rtree (
   id, min_lon, max_lon, min_lat, max_lat
 );
+
+-- Client datasets, imported from backend/data/viewers at start-up. Derived data: it can
+-- be rebuilt from the files, so a new import replaces the previous one.
+CREATE TABLE IF NOT EXISTS datasets (
+  viewer_id     TEXT    PRIMARY KEY,
+  fingerprint   TEXT    NOT NULL,
+  imported_at   TEXT    NOT NULL,
+  feature_count INTEGER NOT NULL
+) STRICT;
+
+CREATE TABLE IF NOT EXISTS dataset_features (
+  id        INTEGER PRIMARY KEY,
+  viewer_id TEXT    NOT NULL REFERENCES datasets (viewer_id),
+  position  INTEGER NOT NULL,
+  feature   TEXT    NOT NULL,
+  minx      REAL    NOT NULL,
+  miny      REAL    NOT NULL,
+  maxx      REAL    NOT NULL,
+  maxy      REAL    NOT NULL
+) STRICT;
+
+CREATE INDEX IF NOT EXISTS dataset_features_by_viewer ON dataset_features (viewer_id, position);
+
+-- Spatial index of each feature's bounding box; queries refine with the exact columns.
+CREATE VIRTUAL TABLE IF NOT EXISTS dataset_feature_bounds USING rtree (
+  id, minx, maxx, miny, maxy
+);

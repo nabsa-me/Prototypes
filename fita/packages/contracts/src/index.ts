@@ -1,4 +1,5 @@
 export * from './api-error.ts';
+export * from './dataset.ts';
 export * from './geo.ts';
 export * from './point-info.ts';
 export * from './report.ts';

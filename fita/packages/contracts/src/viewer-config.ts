@@ -65,6 +65,25 @@ export const TerrainSchema = z
   });
 export type Terrain = z.infer<typeof TerrainSchema>;
 
+/** A client's look inside an embedded viewer. */
+export const BrandingSchema = z.strictObject({
+  primaryColor: z.string().regex(/^#[0-9a-fA-F]{6}$/, 'Must be a #RRGGBB colour'),
+  brandText: z.string().min(1).max(80),
+});
+export type Branding = z.infer<typeof BrandingSchema>;
+
+/**
+ * GeoJSON data a viewer shows. RFC 7946 removed the `crs` member, so the CRS of the file
+ * is declared here. The file lives next to the viewer configurations.
+ */
+export const DatasetSourceSchema = z.strictObject({
+  file: z
+    .string()
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*\.geojson$/, 'Must be a <slug>.geojson file name'),
+  crs: z.enum(['EPSG:25831', 'EPSG:4326']),
+});
+export type DatasetSource = z.infer<typeof DatasetSourceSchema>;
+
 export const ViewerConfigSchema = z.strictObject({
   id: ViewerIdSchema,
   title: z.string().min(1).max(80),
@@ -77,5 +96,7 @@ export const ViewerConfigSchema = z.strictObject({
       message: 'Basemap ids must be unique',
     }),
   terrain: TerrainSchema.optional(),
+  branding: BrandingSchema.optional(),
+  dataset: DatasetSourceSchema.optional(),
 });
 export type ViewerConfig = z.infer<typeof ViewerConfigSchema>;

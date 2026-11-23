@@ -1,0 +1,16 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "area-1",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [[448000.0, 4623500.0], [448600.0, 4623500.0], [448600.0, 4624100.0], [448000.0, 4624100.0], [448000.0, 4623600.0]]
+        ]
+      },
+      "properties": { "name": "Àrea sense tancar" }
+    }
+  ]
+}

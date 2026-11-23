@@ -8,14 +8,16 @@ import {
 } from '../features/reports/adapters/http-routes.ts';
 import { registerSearchRoutes } from '../features/search/adapters/http-routes.ts';
 import type { PlaceSearchPort } from '../features/search/ports.ts';
-import { registerViewerRoutes } from '../features/viewers/adapters/http-routes.ts';
-import type { ViewerConfigStore } from '../features/viewers/ports.ts';
+import {
+  registerViewerRoutes,
+  type ViewerRoutesDeps,
+} from '../features/viewers/adapters/http-routes.ts';
 import { UpstreamContractError, UpstreamUnavailableError } from '../shared/upstream.ts';
 import { sendError } from './replies.ts';
 
 export interface ServerDeps {
   logger: boolean;
-  viewers: { store: ViewerConfigStore };
+  viewers: ViewerRoutesDeps;
   pointInfo: { territory: TerritoryPort; geocoder: GeocoderPort };
   search: { places: PlaceSearchPort };
   reports: ReportRoutesDeps;
