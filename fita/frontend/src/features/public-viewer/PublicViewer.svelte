@@ -7,6 +7,7 @@
   import { loadViewerConfig } from '../../map/load-viewer-config.ts';
   import { createViewerMap, type ViewerMap } from '../../map/viewer-map.ts';
   import CursorPosition from './CursorPosition.svelte';
+  import PlaceSearch from './PlaceSearch.svelte';
   import PointInfoPanel from './PointInfoPanel.svelte';
   import { initialState, serializePermalink } from './permalink.ts';
 
@@ -105,9 +106,14 @@
       <Notice tone="error">No s'ha pogut carregar el visor. Torna-ho a provar més tard.</Notice>
     </div>
   {:else}
-    <header class="overlay top-left brand">
-      <h1>{load.config.title}</h1>
-    </header>
+    <div class="overlay top-left stack">
+      <header class="brand">
+        <h1>{load.config.title}</h1>
+      </header>
+      {#if viewer}
+        <div class="search"><PlaceSearch map={viewer.map} /></div>
+      {/if}
+    </div>
 
     {#if viewer}
       <PointInfoPanel
@@ -180,6 +186,19 @@
     .behind-sheet {
       display: none;
     }
+  }
+
+  .stack {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+
+  .search {
+    width: min(22rem, calc(100vw - 5rem));
+    box-shadow: var(--shadow-overlay);
+    border-radius: var(--radius-md);
   }
 
   .brand h1 {

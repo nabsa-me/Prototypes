@@ -10,6 +10,7 @@ export function buildTestServer(overrides: Partial<Omit<ServerDeps, 'logger'>> =
     logger: false,
     viewers: { store: { read: notUsed } },
     pointInfo: { territory: { locate: notUsed }, geocoder: { reverse: notUsed } },
+    search: { places: { autocomplete: notUsed } },
     ...overrides,
   });
 }

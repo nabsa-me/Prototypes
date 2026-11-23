@@ -37,8 +37,8 @@ persistència serà un fitxer SQLite de `node:sqlite`) i el prototip s'executa e
 
 ## Serveis de l'ICGC a través del backend
 
-La fitxa del punt (`GET /api/point-info`) consulta l'API Territorial i el Geocodificador de
-l'ICGC des del backend, no des del navegador:
+La fitxa del punt (`GET /api/point-info`) i el cercador (`GET /api/search`) consulten l'API
+Territorial i el Geocodificador de l'ICGC des del backend, no des del navegador:
 
 - Un sol endpoint agrega diverses fonts: municipi i comarca (API Territorial), adreça més
   propera (Geocodificador, cerca inversa) i coordenades en ETRS89 UTM 31N i WGS84.
@@ -47,6 +47,10 @@ l'ICGC des del backend, no des del navegador:
 - Es degrada amb elegància: les fonts es consulten amb `Promise.allSettled` i la fitxa surt
   amb el que hagi respost, indicant quina font ha fallat. Un error que no és del servei
   extern (un defecte del codi) no s'amaga: la petició respon 500.
+
+El cercador no es pot degradar: si el Geocodificador no respon, l'API respon 503; si
+respon fora del seu contracte, 502. Un 4xx del servei vol dir que la petició és incorrecta
+i es tracta com un defecte (500).
 
 Cada crida té un temps límit de 4 s i cap reintent. De l'API Territorial s'usa l'endpoint
 documentat `/territorial/elements/municipis/{lon},{lat}?skipgeometry=true`: una sola

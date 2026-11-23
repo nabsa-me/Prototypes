@@ -1,10 +1,11 @@
 import { loadConfig } from './config.ts';
 import { createIcgcReverseGeocoder } from './features/point-info/adapters/icgc-reverse-geocoder.ts';
 import { createIcgcTerritory } from './features/point-info/adapters/icgc-territory.ts';
+import { createIcgcAutocomplete } from './features/search/adapters/icgc-autocomplete.ts';
 import { createJsonFileViewerStore } from './features/viewers/adapters/json-file-store.ts';
 import { buildServer } from './http/server.ts';
 
-/** Per call to an ICGC service. No retries: the user retries by tapping again. */
+/** Per call to an ICGC service. No retries: the user retries by tapping or typing again. */
 const UPSTREAM_TIMEOUT_MS = 4000;
 
 const config = loadConfig();
@@ -20,6 +21,12 @@ const app = buildServer({
       timeoutMs: UPSTREAM_TIMEOUT_MS,
     }),
     geocoder: createIcgcReverseGeocoder({
+      baseUrl: config.icgcGeocoderUrl,
+      timeoutMs: UPSTREAM_TIMEOUT_MS,
+    }),
+  },
+  search: {
+    places: createIcgcAutocomplete({
       baseUrl: config.icgcGeocoderUrl,
       timeoutMs: UPSTREAM_TIMEOUT_MS,
     }),
