@@ -59,3 +59,17 @@ petició sense geometria retorna el municipi i la seva comarca.
 L'altitud no ve del backend: el navegador la llegeix del model d'elevacions de 5 m que ja
 pinta el relleu 3D (`queryTerrainElevation`). És aproximada, perquè depèn del nivell de
 zoom de les tessel·les carregades.
+
+## Fonts i llicències de dades
+
+- **Contorn de Catalunya** (`packages/geo/src/catalonia-boundary.ts`): Institut Cartogràfic i
+  Geològic de Catalunya, «Divisions administratives: Catalunya»
+  (`divisions-administratives-v2r2-20260120`), col·lecció `catalunya` de l'API Territorial.
+  Llicència [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.ca). Es conserven
+  el territori continental i Llívia (els únics polígons de més d'1 km²) i se simplifica amb
+  `npx mapshaper -simplify 0.3% keep-shapes` fins a 977 vèrtexs. Límit conegut: respecte
+  del contorn original, la mediana de l'error és de 50 m, el percentil 95 de 300 m i el
+  màxim d'1,2 km. Un punt molt a prop de la costa o de la frontera es pot classificar
+  malament.
+- **Mapes base, ortofoto i model d'elevacions**: serveis ContextMaps de l'ICGC, amb
+  l'atribució que mostra cada mapa.
