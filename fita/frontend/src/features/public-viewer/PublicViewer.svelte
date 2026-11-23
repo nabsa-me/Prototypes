@@ -4,9 +4,10 @@
   import Button from '../../design-system/Button.svelte';
   import Notice from '../../design-system/Notice.svelte';
   import RadioGroup from '../../design-system/RadioGroup.svelte';
-  import CursorPosition from './CursorPosition.svelte';
   import { loadViewerConfig } from '../../map/load-viewer-config.ts';
   import { createViewerMap, type ViewerMap } from '../../map/viewer-map.ts';
+  import CursorPosition from './CursorPosition.svelte';
+  import { initialState, serializePermalink } from './permalink.ts';
 
   const VIEWER_ID = 'public';
   const TILTED_PITCH = 60;
@@ -22,37 +23,66 @@
 
   const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  function writePermalink(map: ViewerMap['map']) {
+    const center = map.getCenter();
+    const hash = serializePermalink({
+      view: {
+        center: [center.lng, center.lat],
+        zoom: map.getZoom(),
+        bearing: map.getBearing(),
+        pitch: map.getPitch(),
+      },
+      layer: basemapId,
+    });
+    // replaceState: panning must not fill the browser history.
+    history.replaceState(history.state, '', `${location.pathname}${location.search}#${hash}`);
+  }
+
+  function start(config: ViewerConfig) {
+    const { view, basemapId: initialBasemap } = initialState(config, location.hash);
+    basemapId = initialBasemap;
+    tilted = view.pitch > 0;
+    const created = createViewerMap({ container, config, view, basemapId });
+    created.map.on('pitchend', () => {
+      tilted = created.map.getPitch() > 0;
+    });
+    created.map.on('moveend', () => writePermalink(created.map));
+    viewer = created;
+    load = { status: 'ready', config };
+  }
+
   onMount(() => {
     const controller = new AbortController();
 
-    loadViewerConfig(VIEWER_ID, controller.signal).then(
-      (config) => {
-        const first = config.basemaps[0];
-        if (!first) throw new Error('A validated config always has a basemap');
-        basemapId = first.id;
-        viewer = createViewerMap({ container, config, view: config.initialView, basemapId });
-        viewer.map.on('pitchend', () => {
-          tilted = (viewer?.map.getPitch() ?? 0) > 0;
-        });
-        tilted = config.initialView.pitch > 0;
-        load = { status: 'ready', config };
-      },
-      (error: unknown) => {
+    // A hash edited by hand or reached with back/forward moves the open map.
+    const onHashChange = () => {
+      if (load.status !== 'ready' || !viewer) return;
+      const next = initialState(load.config, location.hash);
+      basemapId = next.basemapId;
+      viewer.map.jumpTo({ ...next.view });
+    };
+    window.addEventListener('hashchange', onHashChange);
+
+    loadViewerConfig(VIEWER_ID, controller.signal)
+      .then(start)
+      .catch((error: unknown) => {
         if (controller.signal.aborted) return;
         console.error(error);
         load = { status: 'error' };
-      },
-    );
+      });
 
     return () => {
       controller.abort();
+      window.removeEventListener('hashchange', onHashChange);
       viewer?.destroy();
     };
   });
 
   $effect(() => {
     const id = basemapId;
-    viewer?.setBasemap(id);
+    if (!viewer) return;
+    viewer.setBasemap(id);
+    writePermalink(viewer.map);
   });
 
   function toggleTilt() {
