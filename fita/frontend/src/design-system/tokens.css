@@ -17,6 +17,15 @@
   --color-danger: #a8261b;
   --color-danger-soft: #fbe9e7;
   --color-focus: #f2a900;
+  /* Status tones: strong colour for text and map symbols, soft for backgrounds. */
+  --color-warning: #8a4b00;
+  --color-warning-soft: #fdf0dc;
+  --color-info: #1d4ed8;
+  --color-info-soft: #e3ecfd;
+  --color-success: #166534;
+  --color-success-soft: #dcf3e3;
+  --color-neutral: #4b5563;
+  --color-neutral-soft: #eceff1;
   --color-scrim: rgb(27 35 38 / 0.35);
 
   /* Space (4px scale) */

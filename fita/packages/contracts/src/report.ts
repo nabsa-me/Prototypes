@@ -36,3 +36,15 @@ export type NewReport = z.infer<typeof NewReportSchema>;
 
 export const ReportCreatedSchema = z.strictObject({ code: TrackingCodeSchema });
 export type ReportCreated = z.infer<typeof ReportCreatedSchema>;
+
+/** What anyone holding the tracking code may see: no location, no internal version. */
+export const ReportPublicViewSchema = z.strictObject({
+  code: TrackingCodeSchema,
+  category: ReportCategorySchema,
+  description: z.string(),
+  status: ReportStatusSchema,
+  publicNote: z.string().nullable(),
+  createdAt: z.iso.datetime(),
+  updatedAt: z.iso.datetime(),
+});
+export type ReportPublicView = z.infer<typeof ReportPublicViewSchema>;

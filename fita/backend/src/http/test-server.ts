@@ -15,7 +15,11 @@ export function buildTestServer(overrides: Partial<Omit<ServerDeps, 'logger'>> =
     viewers: { store: { read: notUsed } },
     pointInfo: { territory: { locate: notUsed }, geocoder: { reverse: notUsed } },
     search: { places: { autocomplete: notUsed } },
-    reports: { store: { insert: notUsedSync }, clock: notUsedSync, randomIndex: notUsedSync },
+    reports: {
+      store: { insert: notUsedSync, findByCode: notUsedSync },
+      clock: notUsedSync,
+      randomIndex: notUsedSync,
+    },
     ...overrides,
   });
 }

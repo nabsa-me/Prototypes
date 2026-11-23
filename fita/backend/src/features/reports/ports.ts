@@ -12,6 +12,7 @@ export class DuplicateTrackingCodeError extends Error {
 export interface ReportStore {
   /** @throws DuplicateTrackingCodeError when the code is taken. */
   insert(report: Report): void;
+  findByCode(code: string): Report | undefined;
 }
 
 export type Clock = () => Date;

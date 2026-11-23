@@ -24,6 +24,7 @@ function storeTaking(taken: Set<string>) {
       if (taken.has(report.code)) throw new DuplicateTrackingCodeError(report.code);
       saved.push(report);
     },
+    findByCode: () => undefined,
   };
   return { store, saved };
 }
@@ -77,6 +78,7 @@ describe('createReport', () => {
       insert() {
         throw failure;
       },
+      findByCode: () => undefined,
     };
 
     expect(() =>

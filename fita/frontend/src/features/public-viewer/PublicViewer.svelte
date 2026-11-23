@@ -109,6 +109,7 @@
     <div class="overlay top-left stack">
       <header class="brand">
         <h1>{load.config.title}</h1>
+        <a href="/seguiment">Consulta una incidència</a>
       </header>
       {#if viewer}
         <div class="search"><PlaceSearch map={viewer.map} /></div>
@@ -201,12 +202,24 @@
     border-radius: var(--radius-md);
   }
 
-  .brand h1 {
+  .brand {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-1) var(--space-3);
     padding: var(--space-2) var(--space-3);
-    font-size: var(--text-md);
     background: var(--color-surface);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-overlay);
+  }
+
+  .brand h1 {
+    font-size: var(--text-md);
+  }
+
+  .brand a {
+    font-size: var(--text-xs);
+    color: var(--color-primary-strong);
   }
 
   .controls {

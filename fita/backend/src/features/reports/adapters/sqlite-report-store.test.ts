@@ -44,6 +44,15 @@ describe('createSqliteReportStore', () => {
     expect(db.prepare('SELECT COUNT(*) AS n FROM report_locations').get()).toEqual({ n: 1 });
   });
 
+  it('reads back exactly what it stored', () => {
+    const store = createSqliteReportStore(db);
+    const report = aReport({ status: 'in_review', publicNote: 'We are checking it.', version: 2 });
+    store.insert(report);
+
+    expect(store.findByCode('FIT-7K3Q9X')).toEqual(report);
+    expect(store.findByCode('FIT-222222')).toBeUndefined();
+  });
+
   it('lets the schema reject values the domain should never produce', () => {
     expect(() =>
       createSqliteReportStore(db).insert(aReport({ status: 'archived' as Report['status'] })),

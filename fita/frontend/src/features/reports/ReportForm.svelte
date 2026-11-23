@@ -55,7 +55,10 @@
     <Notice>Gràcies. Hem rebut l'error que has reportat.</Notice>
     <p>Codi de seguiment:</p>
     <p class="code">{phase.code}</p>
-    <p class="help">Guarda'l per consultar com avança la revisió.</p>
+    <p class="help">
+      Guarda'l per consultar com avança la revisió:
+      <a href="/seguiment?codi={phase.code}">consulta'n l'estat</a>.
+    </p>
     <Button onclick={onclose}>Tornar a la fitxa</Button>
   </div>
 {:else}
