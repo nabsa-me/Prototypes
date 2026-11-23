@@ -1,8 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { buildServer } from './server.ts';
+import { buildTestServer } from './test-server.ts';
 
-const app = () =>
-  buildServer({ logger: false, viewers: { store: { read: async () => undefined } } });
+const app = () => buildTestServer();
 
 describe('buildServer', () => {
   it('answers the health check', async () => {

@@ -7,6 +7,7 @@
   import { loadViewerConfig } from '../../map/load-viewer-config.ts';
   import { createViewerMap, type ViewerMap } from '../../map/viewer-map.ts';
   import CursorPosition from './CursorPosition.svelte';
+  import PointInfoPanel from './PointInfoPanel.svelte';
   import { initialState, serializePermalink } from './permalink.ts';
 
   const VIEWER_ID = 'public';
@@ -18,6 +19,7 @@
   let load = $state<Load>({ status: 'loading' });
   let basemapId = $state('');
   let tilted = $state(false);
+  let panelOpen = $state(false);
   let container: HTMLDivElement;
   let viewer = $state.raw<ViewerMap>();
 
@@ -107,7 +109,15 @@
       <h1>{load.config.title}</h1>
     </header>
 
-    <div class="overlay bottom-left">
+    {#if viewer}
+      <PointInfoPanel
+        map={viewer.map}
+        terrain={load.config.terrain}
+        onopenchange={(open) => (panelOpen = open)}
+      />
+    {/if}
+
+    <div class="overlay bottom-left" class:behind-sheet={panelOpen}>
       {#if viewer}
         <CursorPosition map={viewer.map} />
       {/if}
@@ -164,6 +174,11 @@
   @media (max-width: 639px) {
     .bottom-left {
       bottom: 5.5rem;
+    }
+
+    /* The point panel becomes a bottom sheet and takes this space. */
+    .behind-sheet {
+      display: none;
     }
   }
 

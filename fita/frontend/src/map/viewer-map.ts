@@ -14,7 +14,7 @@ import { firstSymbolLayerId, rasterLayerId, rasterVisibility } from './basemaps.
 // the module, so the worker URL is given explicitly.
 setWorkerUrl(workerUrl);
 
-const TERRAIN_SOURCE = 'fita-terrain';
+export const TERRAIN_SOURCE = 'fita-terrain';
 
 /** Catalan texts for MapLibre's built-in controls. */
 const LOCALE = {

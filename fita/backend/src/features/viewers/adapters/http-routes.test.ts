@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildServer } from '../../../http/server.ts';
+import { buildTestServer } from '../../../http/test-server.ts';
 import type { ViewerConfigStore } from '../ports.ts';
 
 const config = {
@@ -18,7 +18,7 @@ function serverWith(documents: Record<string, unknown>) {
       return documents[id];
     },
   };
-  return { app: buildServer({ logger: false, viewers: { store } }), reads };
+  return { app: buildTestServer({ viewers: { store } }), reads };
 }
 
 describe('GET /api/viewers/:id', () => {

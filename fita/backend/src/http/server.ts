@@ -1,4 +1,6 @@
 import Fastify, { type FastifyInstance } from 'fastify';
+import { registerPointInfoRoutes } from '../features/point-info/adapters/http-routes.ts';
+import type { GeocoderPort, TerritoryPort } from '../features/point-info/ports.ts';
 import { registerViewerRoutes } from '../features/viewers/adapters/http-routes.ts';
 import type { ViewerConfigStore } from '../features/viewers/ports.ts';
 import { sendError } from './replies.ts';
@@ -6,6 +8,7 @@ import { sendError } from './replies.ts';
 export interface ServerDeps {
   logger: boolean;
   viewers: { store: ViewerConfigStore };
+  pointInfo: { territory: TerritoryPort; geocoder: GeocoderPort };
 }
 
 /** Builds the HTTP app without listening, so tests can drive it with `inject`. */
@@ -14,6 +17,7 @@ export function buildServer(deps: ServerDeps): FastifyInstance {
 
   app.get('/api/health', async () => ({ status: 'ok' }));
   registerViewerRoutes(app, deps.viewers);
+  registerPointInfoRoutes(app, deps.pointInfo);
 
   app.setNotFoundHandler((request, reply) =>
     sendError(reply, 404, 'not_found', `No route for ${request.method} ${request.url}`),

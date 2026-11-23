@@ -34,3 +34,24 @@ Tests:
 
 Sense Docker: l'aplicació no depèn de cap servei propi que calgui contenir (la
 persistència serà un fitxer SQLite de `node:sqlite`) i el prototip s'executa en local.
+
+## Serveis de l'ICGC a través del backend
+
+La fitxa del punt (`GET /api/point-info`) consulta l'API Territorial i el Geocodificador de
+l'ICGC des del backend, no des del navegador:
+
+- Un sol endpoint agrega diverses fonts: municipi i comarca (API Territorial), adreça més
+  propera (Geocodificador, cerca inversa) i coordenades en ETRS89 UTM 31N i WGS84.
+- El contracte propi aïlla el frontend dels canvis dels serveis externs: si un servei
+  canvia, només canvia el seu adaptador.
+- Es degrada amb elegància: les fonts es consulten amb `Promise.allSettled` i la fitxa surt
+  amb el que hagi respost, indicant quina font ha fallat. Un error que no és del servei
+  extern (un defecte del codi) no s'amaga: la petició respon 500.
+
+Cada crida té un temps límit de 4 s i cap reintent. De l'API Territorial s'usa l'endpoint
+documentat `/territorial/elements/municipis/{lon},{lat}?skipgeometry=true`: una sola
+petició sense geometria retorna el municipi i la seva comarca.
+
+L'altitud no ve del backend: el navegador la llegeix del model d'elevacions de 5 m que ja
+pinta el relleu 3D (`queryTerrainElevation`). És aproximada, perquè depèn del nivell de
+zoom de les tessel·les carregades.
