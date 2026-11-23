@@ -40,11 +40,8 @@ export function openReport(input: NewReport, owned: { code: string; now: Date })
 
 /** The change was prepared against a version that is no longer the current one. */
 export class VersionConflictError extends Error {
-  constructor(
-    readonly expected: number,
-    readonly current: number,
-  ) {
-    super(`The report is at version ${current}, not ${expected}`);
+  constructor(readonly expected: number) {
+    super(`The report is no longer at version ${expected}`);
     this.name = 'VersionConflictError';
   }
 }
@@ -72,7 +69,7 @@ export class PublicNoteRequiredError extends Error {
  */
 export function changeStatus(report: Report, change: ReportStatusChange, now: Date): Report {
   if (change.version !== report.version) {
-    throw new VersionConflictError(change.version, report.version);
+    throw new VersionConflictError(change.version);
   }
   if (!REPORT_TRANSITIONS[report.status].includes(change.status)) {
     throw new InvalidTransitionError(report.status, change.status);

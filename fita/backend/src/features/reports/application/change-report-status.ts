@@ -16,9 +16,6 @@ export function changeReportStatus(
   if (!report) throw new ReportNotFoundError(code);
 
   const updated = changeStatus(report, change, deps.clock());
-  if (!deps.store.update(updated, report.version)) {
-    const current = deps.store.findByCode(code)?.version ?? report.version;
-    throw new VersionConflictError(change.version, current);
-  }
+  if (!deps.store.update(updated, report.version)) throw new VersionConflictError(change.version);
   return updated;
 }
