@@ -1,6 +1,10 @@
 import Fastify, { type FastifyInstance } from 'fastify';
 import { registerPointInfoRoutes } from '../features/point-info/adapters/http-routes.ts';
 import type { GeocoderPort, TerritoryPort } from '../features/point-info/ports.ts';
+import {
+  registerReportRoutes,
+  type ReportRoutesDeps,
+} from '../features/reports/adapters/http-routes.ts';
 import { registerSearchRoutes } from '../features/search/adapters/http-routes.ts';
 import type { PlaceSearchPort } from '../features/search/ports.ts';
 import { registerViewerRoutes } from '../features/viewers/adapters/http-routes.ts';
@@ -13,6 +17,7 @@ export interface ServerDeps {
   viewers: { store: ViewerConfigStore };
   pointInfo: { territory: TerritoryPort; geocoder: GeocoderPort };
   search: { places: PlaceSearchPort };
+  reports: ReportRoutesDeps;
 }
 
 /** Builds the HTTP app without listening, so tests can drive it with `inject`. */
@@ -23,6 +28,7 @@ export function buildServer(deps: ServerDeps): FastifyInstance {
   registerViewerRoutes(app, deps.viewers);
   registerPointInfoRoutes(app, deps.pointInfo);
   registerSearchRoutes(app, deps.search);
+  registerReportRoutes(app, deps.reports);
 
   app.setNotFoundHandler((request, reply) =>
     sendError(reply, 404, 'not_found', `No route for ${request.method} ${request.url}`),

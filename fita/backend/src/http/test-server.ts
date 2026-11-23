@@ -4,6 +4,10 @@ const notUsed = async (): Promise<never> => {
   throw new Error('This port is not used by the test');
 };
 
+const notUsedSync = (): never => {
+  throw new Error('This port is not used by the test');
+};
+
 /** Test-only: a server whose ports fail loudly unless the test provides them. */
 export function buildTestServer(overrides: Partial<Omit<ServerDeps, 'logger'>> = {}) {
   return buildServer({
@@ -11,6 +15,7 @@ export function buildTestServer(overrides: Partial<Omit<ServerDeps, 'logger'>> =
     viewers: { store: { read: notUsed } },
     pointInfo: { territory: { locate: notUsed }, geocoder: { reverse: notUsed } },
     search: { places: { autocomplete: notUsed } },
+    reports: { store: { insert: notUsedSync }, clock: notUsedSync, randomIndex: notUsedSync },
     ...overrides,
   });
 }

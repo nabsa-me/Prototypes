@@ -13,13 +13,37 @@ export class ApiRequestError extends Error {
   }
 }
 
-export async function getJson<S extends z.ZodType>(
+interface RequestOptions {
+  method?: 'GET' | 'POST' | 'PATCH';
+  body?: unknown;
+  headers?: Record<string, string>;
+  signal?: AbortSignal;
+}
+
+/** Sends a request and validates the JSON answer against `schema`. */
+export async function requestJson<S extends z.ZodType>(
+  url: string,
+  schema: S,
+  options: RequestOptions = {},
+): Promise<z.infer<S>> {
+  const headers: Record<string, string> = { accept: 'application/json', ...options.headers };
+  if (options.body !== undefined) headers['content-type'] = 'application/json';
+
+  const response = await fetch(url, {
+    method: options.method ?? 'GET',
+    headers,
+    body: options.body === undefined ? undefined : JSON.stringify(options.body),
+    signal: options.signal,
+  });
+  return readJson(response, schema);
+}
+
+export function getJson<S extends z.ZodType>(
   url: string,
   schema: S,
   signal?: AbortSignal,
 ): Promise<z.infer<S>> {
-  const response = await fetch(url, { headers: { accept: 'application/json' }, signal });
-  return readJson(response, schema);
+  return requestJson(url, schema, { signal });
 }
 
 async function readJson<S extends z.ZodType>(response: Response, schema: S): Promise<z.infer<S>> {

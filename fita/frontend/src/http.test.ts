@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { z } from 'zod';
-import { ApiRequestError, getJson } from './http.ts';
+import { ApiRequestError, getJson, requestJson } from './http.ts';
 
 const Schema = z.strictObject({ name: z.string() });
 
@@ -55,6 +55,27 @@ describe('getJson', () => {
     const error = await failure(getJson('/api/x', Schema));
 
     expect([error.status, error.code]).toEqual([502, 'http_error']);
+  });
+
+  it('sends a JSON body with its content type and extra headers', async () => {
+    const fetchMock = vi.fn(
+      async (_url: string, _init?: RequestInit) => new Response('{"name":"Fita"}', { status: 201 }),
+    );
+    vi.stubGlobal('fetch', fetchMock);
+
+    await requestJson('/api/x', Schema, {
+      method: 'POST',
+      body: { a: 1 },
+      headers: { 'x-admin-token': 't' },
+    });
+
+    const init = fetchMock.mock.calls[0]?.[1];
+    expect(init?.method).toBe('POST');
+    expect(init?.body).toBe('{"a":1}');
+    expect(init?.headers).toMatchObject({
+      'content-type': 'application/json',
+      'x-admin-token': 't',
+    });
   });
 
   it('rejects a body that is not JSON', async () => {
