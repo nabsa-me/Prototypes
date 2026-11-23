@@ -4,6 +4,7 @@ export type Route =
   | { name: 'tracking' }
   | { name: 'internal' }
   | { name: 'embed'; viewerId: string }
+  | { name: 'embed-code'; viewerId: string }
   | { name: 'not-found' };
 
 /** Same shape as a viewer id: a lowercase slug. */
@@ -15,6 +16,7 @@ const ROUTES: ReadonlyArray<readonly [RegExp, (id: string) => Route]> = [
   [/^\/seguiment\/?$/, () => ({ name: 'tracking' })],
   [/^\/intern\/?$/, () => ({ name: 'internal' })],
   [new RegExp(`^/embed/${ID}/?$`), (viewerId) => ({ name: 'embed', viewerId })],
+  [new RegExp(`^/viewers/${ID}/embed-code/?$`), (viewerId) => ({ name: 'embed-code', viewerId })],
 ];
 
 export function matchRoute(pathname: string): Route {

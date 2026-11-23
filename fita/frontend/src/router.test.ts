@@ -18,8 +18,15 @@ describe('matchRoute', () => {
     expect(matchRoute('/embed/ruta-nord/')).toEqual({ name: 'embed', viewerId: 'ruta-nord' });
   });
 
-  it.each(['/embed/', '/embed/Miradors', '/embed/a/b', '/embed/..'])(
-    'does not embed %s',
+  it('captures the viewer id of the embed code page', () => {
+    expect(matchRoute('/viewers/miradors/embed-code')).toEqual({
+      name: 'embed-code',
+      viewerId: 'miradors',
+    });
+  });
+
+  it.each(['/embed/', '/embed/Miradors', '/embed/a/b', '/embed/..', '/viewers/embed-code'])(
+    'does not route %s',
     (pathname) => {
       expect(matchRoute(pathname).name).toBe('not-found');
     },
