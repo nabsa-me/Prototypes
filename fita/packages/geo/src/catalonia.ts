@@ -10,7 +10,8 @@ export const CATALONIA_BBOX: BBox = (() => {
   let maxX = -Infinity;
   let maxY = -Infinity;
   for (const polygon of CATALONIA_BOUNDARY) {
-    for (const [x, y] of polygon[0] ?? []) {
+    // Holes lie inside their outer ring, so including them does not change the box.
+    for (const [x, y] of polygon.flat()) {
       minX = Math.min(minX, x);
       minY = Math.min(minY, y);
       maxX = Math.max(maxX, x);
