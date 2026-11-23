@@ -1,19 +1,11 @@
-import type { NewReport, ReportCategory, ReportStatus } from '@fita/contracts';
+import type { NewReport, ReportAdminView } from '@fita/contracts';
 import { isInsideCatalonia } from '@fita/geo';
 
-export interface Report {
-  code: string;
-  category: ReportCategory;
-  description: string;
-  location: [number, number];
-  status: ReportStatus;
-  /** Note the technician leaves for the person who reported; `null` until one is written. */
-  publicNote: string | null;
-  createdAt: string;
-  updatedAt: string;
-  /** Starts at 1 and grows with every change, for optimistic concurrency. */
-  version: number;
-}
+/**
+ * A report as the domain keeps it. It has exactly the fields of the internal view, so the
+ * contract type is used as is. `publicNote` is `null` until the team writes one.
+ */
+export type Report = ReportAdminView;
 
 export class OutsideCataloniaError extends Error {
   constructor() {

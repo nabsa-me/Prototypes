@@ -1,6 +1,7 @@
 import Fastify, { type FastifyInstance } from 'fastify';
 import { registerPointInfoRoutes } from '../features/point-info/adapters/http-routes.ts';
 import type { GeocoderPort, TerritoryPort } from '../features/point-info/ports.ts';
+import { registerAdminReportRoutes } from '../features/reports/adapters/admin-http-routes.ts';
 import {
   registerReportRoutes,
   type ReportRoutesDeps,
@@ -18,6 +19,8 @@ export interface ServerDeps {
   pointInfo: { territory: TerritoryPort; geocoder: GeocoderPort };
   search: { places: PlaceSearchPort };
   reports: ReportRoutesDeps;
+  /** Shared secret for /api/admin routes. */
+  adminToken: string;
 }
 
 /** Builds the HTTP app without listening, so tests can drive it with `inject`. */
@@ -29,6 +32,7 @@ export function buildServer(deps: ServerDeps): FastifyInstance {
   registerPointInfoRoutes(app, deps.pointInfo);
   registerSearchRoutes(app, deps.search);
   registerReportRoutes(app, deps.reports);
+  registerAdminReportRoutes(app, { ...deps.reports, adminToken: deps.adminToken });
 
   app.setNotFoundHandler((request, reply) =>
     sendError(reply, 404, 'not_found', `No route for ${request.method} ${request.url}`),

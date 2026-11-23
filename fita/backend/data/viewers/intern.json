@@ -1,0 +1,29 @@
+{
+  "id": "intern",
+  "title": "Fita · Safata d'incidències",
+  "initialView": {
+    "center": [1.75, 41.7],
+    "zoom": 7.2,
+    "bearing": 0,
+    "pitch": 0
+  },
+  "style": "https://geoserveis.icgc.cat/contextmaps/icgc.json",
+  "basemaps": [
+    {
+      "id": "contextmaps",
+      "label": "Mapa",
+      "kind": "style"
+    },
+    {
+      "id": "orto",
+      "label": "Ortofoto",
+      "kind": "raster",
+      "tiles": [
+        "https://geoserveis.icgc.cat/servei/catalunya/mapa-base/wmts/orto/MON3857NW/{z}/{x}/{y}.png"
+      ],
+      "tileSize": 256,
+      "maxzoom": 20,
+      "attribution": "<b>Ortofoto Catalunya</b>: <a href=\"https://www.icgc.cat/\">Institut Cartogràfic i Geològic de Catalunya</a>"
+    }
+  ]
+}

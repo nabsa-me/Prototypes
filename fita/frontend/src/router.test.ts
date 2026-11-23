@@ -7,6 +7,7 @@ describe('matchRoute', () => {
     ['/seguiment', 'tracking'],
     ['/seguiment/', 'tracking'],
     ['/seguiment/extra', 'not-found'],
+    ['/intern', 'internal'],
     ['/unknown', 'not-found'],
   ])('%s -> %s', (pathname, name) => {
     expect(matchRoute(pathname).name).toBe(name);

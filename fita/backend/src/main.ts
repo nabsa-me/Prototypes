@@ -40,6 +40,7 @@ const app = buildServer({
     clock: () => new Date(),
     randomIndex: (max) => randomInt(max),
   },
+  adminToken: config.adminToken,
 });
 
 await app.listen({ host: '127.0.0.1', port: config.apiPort });

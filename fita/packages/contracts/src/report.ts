@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { LonLatSchema } from './geo.ts';
+import { BoundsTextSchema, LonLatSchema } from './geo.ts';
 
 export const REPORT_CATEGORIES = ['toponym', 'road', 'building', 'boundary', 'other'] as const;
 export const ReportCategorySchema = z.enum(REPORT_CATEGORIES);
@@ -48,3 +48,19 @@ export const ReportPublicViewSchema = z.strictObject({
   updatedAt: z.iso.datetime(),
 });
 export type ReportPublicView = z.infer<typeof ReportPublicViewSchema>;
+
+/** What the internal team sees: the public view plus the location and the version. */
+export const ReportAdminViewSchema = ReportPublicViewSchema.extend({
+  location: LonLatSchema,
+  /** Starts at 1 and grows with every change; a change must name the version it read. */
+  version: z.number().int().min(1),
+});
+export type ReportAdminView = z.infer<typeof ReportAdminViewSchema>;
+
+export const ReportListQuerySchema = z.strictObject({
+  status: ReportStatusSchema.optional(),
+  bbox: BoundsTextSchema.optional(),
+});
+
+export const ReportListSchema = z.strictObject({ reports: z.array(ReportAdminViewSchema) });
+export type ReportList = z.infer<typeof ReportListSchema>;

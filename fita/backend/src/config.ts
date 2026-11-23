@@ -19,6 +19,7 @@ const EnvSchema = z.object({
   ICGC_TERRITORI_URL: serviceUrl,
   ICGC_GEOCODER_URL: serviceUrl,
   DATABASE_PATH: z.string().regex(/\.sqlite$/, 'must end in .sqlite'),
+  ADMIN_TOKEN: z.string().min(16, 'must have at least 16 characters'),
 });
 
 export interface Config {
@@ -27,6 +28,7 @@ export interface Config {
   icgcGeocoderUrl: string;
   /** Absolute path of the SQLite file. */
   databasePath: string;
+  adminToken: string;
 }
 
 /** `rootDir` resolves relative paths: the repository root. */
@@ -42,6 +44,7 @@ export function parseConfig(env: Record<string, string | undefined>, rootDir: st
     databasePath: isAbsolute(result.data.DATABASE_PATH)
       ? result.data.DATABASE_PATH
       : resolve(rootDir, result.data.DATABASE_PATH),
+    adminToken: result.data.ADMIN_TOKEN,
   };
 }
 

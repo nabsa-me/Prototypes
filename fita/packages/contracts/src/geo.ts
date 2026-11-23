@@ -20,3 +20,10 @@ export const DecimalTextSchema = z
   .string()
   .regex(/^-?\d+(\.\d+)?$/, 'Must be a decimal number')
   .transform(Number);
+
+/** Bounds sent as text in a query string: `west,south,east,north`. */
+export const BoundsTextSchema = z
+  .string()
+  .regex(/^-?\d+(\.\d+)?(,-?\d+(\.\d+)?){3}$/, 'Must be west,south,east,north')
+  .transform((text) => text.split(',').map(Number))
+  .pipe(BoundsSchema);

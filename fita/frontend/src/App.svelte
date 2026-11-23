@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import PublicViewer from './features/public-viewer/PublicViewer.svelte';
+  import InternalPage from './features/reports/InternalPage.svelte';
   import TrackingPage from './features/reports/TrackingPage.svelte';
   import NotFound from './NotFound.svelte';
   import { isInternalNavigation, matchRoute, navigate } from './router.ts';
@@ -39,6 +40,8 @@
   <PublicViewer />
 {:else if route.name === 'tracking'}
   <TrackingPage />
+{:else if route.name === 'internal'}
+  <InternalPage />
 {:else}
   <NotFound />
 {/if}

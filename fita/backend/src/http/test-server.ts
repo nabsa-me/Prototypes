@@ -16,10 +16,11 @@ export function buildTestServer(overrides: Partial<Omit<ServerDeps, 'logger'>> =
     pointInfo: { territory: { locate: notUsed }, geocoder: { reverse: notUsed } },
     search: { places: { autocomplete: notUsed } },
     reports: {
-      store: { insert: notUsedSync, findByCode: notUsedSync },
+      store: { insert: notUsedSync, findByCode: notUsedSync, list: notUsedSync },
       clock: notUsedSync,
       randomIndex: notUsedSync,
     },
+    adminToken: 'test-admin-token-not-used',
     ...overrides,
   });
 }

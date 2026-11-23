@@ -1,3 +1,5 @@
+import type { ReportStatus } from '@fita/contracts';
+import type { BBox } from '@fita/geo';
 import type { Report } from './domain/report.ts';
 
 /** The tracking code is already taken. */
@@ -8,11 +10,19 @@ export class DuplicateTrackingCodeError extends Error {
   }
 }
 
+export interface ReportFilter {
+  status?: ReportStatus | undefined;
+  /** Only reports whose location lies inside these bounds (edges included). */
+  bbox?: BBox | undefined;
+}
+
 /** Persistence of reports. Synchronous: the only implementation is node:sqlite. */
 export interface ReportStore {
   /** @throws DuplicateTrackingCodeError when the code is taken. */
   insert(report: Report): void;
   findByCode(code: string): Report | undefined;
+  /** Newest first. */
+  list(filter: ReportFilter): Report[];
 }
 
 export type Clock = () => Date;

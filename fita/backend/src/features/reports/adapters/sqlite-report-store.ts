@@ -3,6 +3,11 @@ import { inTransaction, isUniqueViolation } from '../../../shared/db.ts';
 import type { Report } from '../domain/report.ts';
 import { DuplicateTrackingCodeError, type ReportStore } from '../ports.ts';
 
+const COLUMNS = `r.code, r.category, r.description, r.lon, r.lat, r.status, r.public_note,
+  r.created_at, r.updated_at, r.version`;
+
+const NEWEST_FIRST = 'ORDER BY r.created_at DESC, r.id DESC';
+
 export function createSqliteReportStore(db: DatabaseSync): ReportStore {
   const insertReport = db.prepare(`
     INSERT INTO reports
@@ -10,10 +15,27 @@ export function createSqliteReportStore(db: DatabaseSync): ReportStore {
     VALUES
       (:code, :category, :description, :lon, :lat, :status, :publicNote, :createdAt, :updatedAt, :version)
   `);
-  const selectByCode = db.prepare(`SELECT ${COLUMNS} FROM reports WHERE code = ?`);
   const insertLocation = db.prepare(`
     INSERT INTO report_locations (id, min_lon, max_lon, min_lat, max_lat)
     VALUES (:id, :lon, :lon, :lat, :lat)
+  `);
+  const selectByCode = db.prepare(`SELECT ${COLUMNS} FROM reports r WHERE r.code = ?`);
+  const selectAll = db.prepare(`
+    SELECT ${COLUMNS} FROM reports r
+    WHERE (:status IS NULL OR r.status = :status)
+    ${NEWEST_FIRST}
+  `);
+  // The R*Tree narrows the candidates with its index; it stores 32-bit floats rounded
+  // outwards, so the exact lon/lat columns decide the edge cases.
+  const selectInBbox = db.prepare(`
+    SELECT ${COLUMNS} FROM report_locations l
+    JOIN reports r ON r.id = l.id
+    WHERE l.min_lon <= :east AND l.max_lon >= :west
+      AND l.min_lat <= :north AND l.max_lat >= :south
+      AND r.lon BETWEEN :west AND :east
+      AND r.lat BETWEEN :south AND :north
+      AND (:status IS NULL OR r.status = :status)
+    ${NEWEST_FIRST}
   `);
 
   return {
@@ -47,11 +69,21 @@ export function createSqliteReportStore(db: DatabaseSync): ReportStore {
       const row = selectByCode.get(code) as ReportRow | undefined;
       return row && toReport(row);
     },
+
+    list({ status, bbox }) {
+      const rows = bbox
+        ? selectInBbox.all({
+            west: bbox[0],
+            south: bbox[1],
+            east: bbox[2],
+            north: bbox[3],
+            status: status ?? null,
+          })
+        : selectAll.all({ status: status ?? null });
+      return (rows as unknown as ReportRow[]).map(toReport);
+    },
   };
 }
-
-const COLUMNS =
-  'code, category, description, lon, lat, status, public_note, created_at, updated_at, version';
 
 interface ReportRow {
   code: string;

@@ -60,6 +60,17 @@ L'altitud no ve del backend: el navegador la llegeix del model d'elevacions de 5
 pinta el relleu 3D (`queryTerrainElevation`). És aproximada, perquè depèn del nivell de
 zoom de les tessel·les carregades.
 
+## Safata interna (`/intern`)
+
+La safata és per a l'equip que revisa els errors que reporten els usuaris. Les rutes
+`/api/admin/*` exigeixen la capçalera `x-admin-token` amb la contrasenya d'`ADMIN_TOKEN`
+(`local-admin-token` a `.env.example`). El servidor compara els resums SHA-256 de tots dos
+valors amb `crypto.timingSafeEqual`. El navegador guarda la contrasenya a `sessionStorage`.
+
+**Això no és autenticació real.** És un secret compartit: no identifica qui fa cada canvi,
+no caduca i no es pot revocar per persona. En producció caldria un proveïdor d'identitat
+(OIDC) amb usuaris i rols, i registrar l'autor de cada canvi d'estat.
+
 ## Fonts i llicències de dades
 
 - **Contorn de Catalunya** (`packages/geo/src/catalonia-boundary.ts`): Institut Cartogràfic i

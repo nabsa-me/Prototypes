@@ -53,6 +53,59 @@ describe('createSqliteReportStore', () => {
     expect(store.findByCode('FIT-222222')).toBeUndefined();
   });
 
+  describe('list', () => {
+    // Barcelona, Girona and Lleida, created in this order.
+    const barcelona = aReport({
+      code: 'FIT-BBBBBB',
+      location: [2.1701, 41.387],
+      createdAt: '2026-11-01T10:00:00.000Z',
+    });
+    const girona = aReport({
+      code: 'FIT-GGGGGG',
+      location: [2.8214, 41.9794],
+      status: 'in_review',
+      createdAt: '2026-11-02T10:00:00.000Z',
+    });
+    const lleida = aReport({
+      code: 'FIT-LLLLLL',
+      location: [0.62, 41.6176],
+      createdAt: '2026-11-03T10:00:00.000Z',
+    });
+
+    beforeEach(() => {
+      const store = createSqliteReportStore(db);
+      for (const report of [barcelona, girona, lleida]) store.insert(report);
+    });
+
+    const codes = (filter: Parameters<ReturnType<typeof createSqliteReportStore>['list']>[0]) =>
+      createSqliteReportStore(db)
+        .list(filter)
+        .map((report) => report.code);
+
+    it('lists every report, newest first', () => {
+      expect(codes({})).toEqual(['FIT-LLLLLL', 'FIT-GGGGGG', 'FIT-BBBBBB']);
+    });
+
+    it('filters by status', () => {
+      expect(codes({ status: 'in_review' })).toEqual(['FIT-GGGGGG']);
+    });
+
+    it('filters by bounding box', () => {
+      // East of Lleida: Barcelona and Girona.
+      expect(codes({ bbox: [1.5, 41, 3.5, 42.5] })).toEqual(['FIT-GGGGGG', 'FIT-BBBBBB']);
+    });
+
+    it('combines both filters', () => {
+      expect(codes({ status: 'open', bbox: [1.5, 41, 3.5, 42.5] })).toEqual(['FIT-BBBBBB']);
+    });
+
+    it('includes a point on the edge and excludes one a hair outside it', () => {
+      // The index rounds outwards to 32-bit floats; the exact columns decide.
+      expect(codes({ bbox: [2.1701, 41.387, 2.2, 41.4] })).toEqual(['FIT-BBBBBB']);
+      expect(codes({ bbox: [2.17010001, 41.387, 2.2, 41.4] })).toEqual([]);
+    });
+  });
+
   it('lets the schema reject values the domain should never produce', () => {
     expect(() =>
       createSqliteReportStore(db).insert(aReport({ status: 'archived' as Report['status'] })),

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { NewReportSchema, TrackingCodeSchema } from './report.ts';
+import { NewReportSchema, ReportListQuerySchema, TrackingCodeSchema } from './report.ts';
 
 const valid = {
   category: 'toponym',
@@ -22,6 +22,29 @@ describe('NewReportSchema', () => {
     ['a code set by the client', { ...valid, code: 'FIT-AAAAAA' }],
   ])('rejects %s', (_label, report) => {
     expect(NewReportSchema.safeParse(report).success).toBe(false);
+  });
+});
+
+describe('ReportListQuerySchema', () => {
+  it('parses a status and a bbox sent as text', () => {
+    expect(ReportListQuerySchema.parse({ status: 'open', bbox: '0.1,40.5,3.3,42.9' })).toEqual({
+      status: 'open',
+      bbox: [0.1, 40.5, 3.3, 42.9],
+    });
+  });
+
+  it('accepts no filters at all', () => {
+    expect(ReportListQuerySchema.parse({})).toEqual({});
+  });
+
+  it.each([
+    ['an unknown status', { status: 'closed' }],
+    ['a bbox with three numbers', { bbox: '0.1,40.5,3.3' }],
+    ['a bbox with spaces', { bbox: '0.1, 40.5, 3.3, 42.9' }],
+    ['an inverted bbox', { bbox: '3.3,40.5,0.1,42.9' }],
+    ['a bbox out of range', { bbox: '0,40,200,42' }],
+  ])('rejects %s', (_label, query) => {
+    expect(ReportListQuerySchema.safeParse(query).success).toBe(false);
   });
 });
 

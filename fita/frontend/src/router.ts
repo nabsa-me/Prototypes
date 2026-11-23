@@ -1,9 +1,11 @@
 /** Client-side routes. The server (Vite) answers index.html for every path. */
-export type Route = { name: 'viewer' } | { name: 'tracking' } | { name: 'not-found' };
+export type Route =
+  { name: 'viewer' } | { name: 'tracking' } | { name: 'internal' } | { name: 'not-found' };
 
 const ROUTES: ReadonlyArray<readonly [RegExp, () => Route]> = [
   [/^\/$/, () => ({ name: 'viewer' })],
   [/^\/seguiment\/?$/, () => ({ name: 'tracking' })],
+  [/^\/intern\/?$/, () => ({ name: 'internal' })],
 ];
 
 export function matchRoute(pathname: string): Route {

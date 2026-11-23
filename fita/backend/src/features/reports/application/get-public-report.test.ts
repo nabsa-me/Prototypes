@@ -7,6 +7,7 @@ function storeWith(...reports: ReturnType<typeof aReport>[]): ReportStore {
   return {
     insert: () => undefined,
     findByCode: (code) => reports.find((report) => report.code === code),
+    list: () => reports,
   };
 }
 

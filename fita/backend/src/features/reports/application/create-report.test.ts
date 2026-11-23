@@ -25,6 +25,7 @@ function storeTaking(taken: Set<string>) {
       saved.push(report);
     },
     findByCode: () => undefined,
+    list: () => [],
   };
   return { store, saved };
 }
@@ -79,6 +80,7 @@ describe('createReport', () => {
         throw failure;
       },
       findByCode: () => undefined,
+      list: () => [],
     };
 
     expect(() =>

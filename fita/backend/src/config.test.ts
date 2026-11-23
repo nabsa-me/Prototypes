@@ -9,6 +9,7 @@ const valid = {
   ICGC_TERRITORI_URL: 'https://api.icgc.cat/territorial',
   ICGC_GEOCODER_URL: 'https://eines.icgc.cat/geocodificador',
   DATABASE_PATH: 'backend/data/fita.sqlite',
+  ADMIN_TOKEN: 'local-admin-token',
 };
 
 describe('parseConfig', () => {
@@ -18,6 +19,7 @@ describe('parseConfig', () => {
       icgcTerritoriUrl: 'https://api.icgc.cat/territorial',
       icgcGeocoderUrl: 'https://eines.icgc.cat/geocodificador',
       databasePath: resolve(root, 'backend/data/fita.sqlite'),
+      adminToken: 'local-admin-token',
     });
   });
 
@@ -56,5 +58,12 @@ describe('parseConfig', () => {
     ['a name that only contains sqlite', 'backend/data/fitaXsqlite'],
   ])('rejects a database path that is %s', (_label, value) => {
     expect(() => parseConfig({ ...valid, DATABASE_PATH: value }, root)).toThrow(/DATABASE_PATH/);
+  });
+
+  it.each([
+    ['missing', undefined],
+    ['shorter than 16 characters', 'short-token'],
+  ])('rejects an admin token that is %s', (_label, value) => {
+    expect(() => parseConfig({ ...valid, ADMIN_TOKEN: value }, root)).toThrow(/ADMIN_TOKEN/);
   });
 });
