@@ -5,7 +5,8 @@
   "type": "module",
   "workspaces": [
     "packages/*",
-    "backend"
+    "backend",
+    "frontend"
   ],
   "engines": {
     "node": ">=24.15.0"
@@ -22,7 +23,9 @@
     "@vitest/coverage-v8": "^5.1.1",
     "eslint": "^10.15.0",
     "eslint-plugin-prettier": "^5.5.7",
+    "eslint-plugin-svelte": "^3.24.1",
     "prettier": "^3.10.1",
+    "prettier-plugin-svelte": "^4.2.0",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.74.0",
     "vitest": "^5.1.1"

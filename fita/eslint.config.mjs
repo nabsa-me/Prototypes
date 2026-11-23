@@ -2,9 +2,11 @@ import js from '@eslint/js';
 import json from '@eslint/json';
 import { defineConfig } from 'eslint/config';
 import prettier from 'eslint-plugin-prettier';
+import svelte from 'eslint-plugin-svelte';
 import tseslint from 'typescript-eslint';
 
-const codeFiles = ['**/*.{js,mjs,cjs,ts,mts,cts}'];
+const codeFiles = ['**/*.{js,mjs,cjs,ts,mts,cts,svelte}'];
+const svelteFiles = ['**/*.svelte', '**/*.svelte.{js,ts}'];
 const jsoncFiles = ['**/tsconfig*.json', '**/.vscode/*.json', '**/*.jsonc'];
 
 const nodeGlobals = {
@@ -36,6 +38,13 @@ export default defineConfig(
   {
     files: ['**/*.{js,mjs,cjs}'],
     languageOptions: { globals: nodeGlobals },
+  },
+  {
+    files: svelteFiles,
+    extends: [svelte.configs.recommended],
+    languageOptions: { parserOptions: { parser: tseslint.parser } },
+    // svelte-check already type-checks the components, globals included.
+    rules: { 'no-undef': 'off' },
   },
   {
     files: ['**/*.json'],
