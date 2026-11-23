@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import EmbeddedViewer from './features/embedded-viewer/EmbeddedViewer.svelte';
   import PublicViewer from './features/public-viewer/PublicViewer.svelte';
   import InternalPage from './features/reports/InternalPage.svelte';
   import TrackingPage from './features/reports/TrackingPage.svelte';
@@ -42,6 +43,10 @@
   <TrackingPage />
 {:else if route.name === 'internal'}
   <InternalPage />
+{:else if route.name === 'embed'}
+  {#key route.viewerId}
+    <EmbeddedViewer viewerId={route.viewerId} />
+  {/key}
 {:else}
   <NotFound />
 {/if}

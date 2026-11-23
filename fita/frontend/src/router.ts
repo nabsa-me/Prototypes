@@ -1,16 +1,26 @@
 /** Client-side routes. The server (Vite) answers index.html for every path. */
 export type Route =
-  { name: 'viewer' } | { name: 'tracking' } | { name: 'internal' } | { name: 'not-found' };
+  | { name: 'viewer' }
+  | { name: 'tracking' }
+  | { name: 'internal' }
+  | { name: 'embed'; viewerId: string }
+  | { name: 'not-found' };
 
-const ROUTES: ReadonlyArray<readonly [RegExp, () => Route]> = [
+/** Same shape as a viewer id: a lowercase slug. */
+const ID = '([a-z0-9]+(?:-[a-z0-9]+)*)';
+
+/** Each pattern captures at most one group: the viewer id. */
+const ROUTES: ReadonlyArray<readonly [RegExp, (id: string) => Route]> = [
   [/^\/$/, () => ({ name: 'viewer' })],
   [/^\/seguiment\/?$/, () => ({ name: 'tracking' })],
   [/^\/intern\/?$/, () => ({ name: 'internal' })],
+  [new RegExp(`^/embed/${ID}/?$`), (viewerId) => ({ name: 'embed', viewerId })],
 ];
 
 export function matchRoute(pathname: string): Route {
   for (const [pattern, route] of ROUTES) {
-    if (pattern.test(pathname)) return route();
+    const match = pattern.exec(pathname);
+    if (match) return route(match[1] ?? '');
   }
   return { name: 'not-found' };
 }
