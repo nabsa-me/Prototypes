@@ -1,0 +1,33 @@
+# Dependencies (each project has its own package.json)
+node_modules/
+.pnpm-store/
+.venv/
+venv/
+__pycache__/
+
+# Builds
+dist/
+build/
+.next/
+out/
+.turbo/
+coverage/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editors / OS
+.idea/
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+Thumbs.db
+desktop.ini
