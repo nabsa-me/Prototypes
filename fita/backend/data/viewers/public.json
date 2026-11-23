@@ -1,0 +1,40 @@
+{
+  "id": "public",
+  "title": "Fita · Visor del territori",
+  "initialView": {
+    "center": [1.75, 41.7],
+    "zoom": 7.6,
+    "bearing": 0,
+    "pitch": 0
+  },
+  "style": "https://geoserveis.icgc.cat/contextmaps/icgc.json",
+  "basemaps": [
+    {
+      "id": "contextmaps",
+      "label": "Mapa",
+      "kind": "style"
+    },
+    {
+      "id": "orto",
+      "label": "Ortofoto",
+      "kind": "raster",
+      "tiles": [
+        "https://geoserveis.icgc.cat/servei/catalunya/mapa-base/wmts/orto/MON3857NW/{z}/{x}/{y}.png"
+      ],
+      "tileSize": 256,
+      "maxzoom": 20,
+      "attribution": "<b>Ortofoto Catalunya</b>: <a href=\"https://www.icgc.cat/\">Institut Cartogràfic i Geològic de Catalunya</a>"
+    }
+  ],
+  "terrain": {
+    "tiles": [
+      "https://geoserveis.icgc.cat/servei/catalunya/contextmaps-terreny-5m-rgb/wmts/{z}/{x}/{y}.png"
+    ],
+    "tileSize": 512,
+    "minzoom": 7,
+    "maxzoom": 14,
+    "encoding": "mapbox",
+    "bounds": [0, 40.5, 4.2, 42.86],
+    "attribution": "<b>Model d'elevacions 5 m</b>: <a href=\"https://www.icgc.cat/\">Institut Cartogràfic i Geològic de Catalunya</a>"
+  }
+}

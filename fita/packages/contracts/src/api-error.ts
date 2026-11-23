@@ -1,0 +1,9 @@
+import { z } from 'zod';
+
+export const ApiErrorSchema = z.strictObject({
+  error: z.strictObject({
+    code: z.string().min(1),
+    message: z.string().min(1),
+  }),
+});
+export type ApiError = z.infer<typeof ApiErrorSchema>;

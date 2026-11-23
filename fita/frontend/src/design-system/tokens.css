@@ -1,0 +1,58 @@
+/*
+ * Design tokens. Every colour, space, size and radius used by the UI comes from here.
+ * Breakpoint: 640px (CSS custom properties cannot be used inside media queries, so the
+ * value is repeated where needed).
+ */
+:root {
+  /* Colour */
+  --color-primary: #0f5c5c;
+  --color-primary-strong: #0a4242;
+  --color-primary-soft: #e2f0ef;
+  --color-on-primary: #ffffff;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f3f5f6;
+  --color-text: #1b2326;
+  --color-text-muted: #56636a;
+  --color-border: #cfd7db;
+  --color-danger: #a8261b;
+  --color-danger-soft: #fbe9e7;
+  --color-focus: #f2a900;
+  --color-scrim: rgb(27 35 38 / 0.35);
+
+  /* Space (4px scale) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+
+  /* Typography */
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: ui-monospace, 'Cascadia Mono', Consolas, 'Liberation Mono', monospace;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.25rem;
+  --weight-regular: 400;
+  --weight-bold: 650;
+  --line-height: 1.45;
+
+  /* Shape and depth */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 14px;
+  --shadow-overlay: 0 2px 10px rgb(0 0 0 / 0.18);
+
+  /* Focus */
+  --focus-ring: 3px solid var(--color-focus);
+  --focus-offset: 2px;
+
+  /* Sizes */
+  --control-height: 2.5rem;
+  --panel-width: 22rem;
+
+  /* Layers */
+  --layer-overlay: 10;
+  --layer-panel: 20;
+}

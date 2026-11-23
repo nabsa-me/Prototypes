@@ -1,0 +1,11 @@
+/* Keeps the attribution on the right so the bottom-left corner stays free for viewer controls. */
+.maplibregl-ctrl-bottom-right .maplibregl-ctrl-attrib {
+  max-width: min(40rem, calc(100vw - 18rem));
+  font-size: var(--text-xs);
+}
+
+@media (max-width: 639px) {
+  .maplibregl-ctrl-bottom-right .maplibregl-ctrl-attrib {
+    max-width: calc(100vw - 1rem);
+  }
+}
