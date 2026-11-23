@@ -67,7 +67,7 @@ describe('createSqliteReportStore', () => {
       createdAt: '2026-11-02T10:00:00.000Z',
     });
     const lleida = aReport({
-      code: 'FIT-LLLLLL',
+      code: 'FIT-KKKKKK',
       location: [0.62, 41.6176],
       createdAt: '2026-11-03T10:00:00.000Z',
     });
@@ -83,7 +83,7 @@ describe('createSqliteReportStore', () => {
         .map((report) => report.code);
 
     it('lists every report, newest first', () => {
-      expect(codes({})).toEqual(['FIT-LLLLLL', 'FIT-GGGGGG', 'FIT-BBBBBB']);
+      expect(codes({})).toEqual(['FIT-KKKKKK', 'FIT-GGGGGG', 'FIT-BBBBBB']);
     });
 
     it('filters by status', () => {
@@ -103,6 +103,34 @@ describe('createSqliteReportStore', () => {
       // The index rounds outwards to 32-bit floats; the exact columns decide.
       expect(codes({ bbox: [2.1701, 41.387, 2.2, 41.4] })).toEqual(['FIT-BBBBBB']);
       expect(codes({ bbox: [2.17010001, 41.387, 2.2, 41.4] })).toEqual([]);
+    });
+  });
+
+  describe('update', () => {
+    it('writes the change when the stored version is the expected one', () => {
+      const store = createSqliteReportStore(db);
+      store.insert(aReport());
+      const changed = aReport({
+        status: 'in_review',
+        publicNote: 'We are checking it.',
+        updatedAt: '2026-11-24T09:30:00.000Z',
+        version: 2,
+      });
+
+      expect(store.update(changed, 1)).toBe(true);
+      expect(store.findByCode('FIT-7K3Q9X')).toEqual(changed);
+    });
+
+    it('writes nothing when the stored version moved on', () => {
+      const store = createSqliteReportStore(db);
+      store.insert(aReport({ version: 3 }));
+
+      expect(store.update(aReport({ status: 'dismissed', version: 3 }), 2)).toBe(false);
+      expect(store.findByCode('FIT-7K3Q9X')).toMatchObject({ status: 'open', version: 3 });
+    });
+
+    it('answers false for a code that does not exist', () => {
+      expect(createSqliteReportStore(db).update(aReport({ code: 'FIT-222222' }), 1)).toBe(false);
     });
   });
 

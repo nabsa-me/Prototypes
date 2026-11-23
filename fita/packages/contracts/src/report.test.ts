@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { NewReportSchema, ReportListQuerySchema, TrackingCodeSchema } from './report.ts';
+import {
+  NewReportSchema,
+  REPORT_TRANSITIONS,
+  ReportListQuerySchema,
+  ReportStatusChangeSchema,
+  TrackingCodeSchema,
+} from './report.ts';
 
 const valid = {
   category: 'toponym',
@@ -45,6 +51,42 @@ describe('ReportListQuerySchema', () => {
     ['a bbox out of range', { bbox: '0,40,200,42' }],
   ])('rejects %s', (_label, query) => {
     expect(ReportListQuerySchema.safeParse(query).success).toBe(false);
+  });
+});
+
+describe('ReportStatusChangeSchema', () => {
+  it('accepts a move to review without a note', () => {
+    expect(ReportStatusChangeSchema.safeParse({ status: 'in_review', version: 1 }).success).toBe(
+      true,
+    );
+  });
+
+  it('accepts closing with a note', () => {
+    expect(
+      ReportStatusChangeSchema.safeParse({ status: 'resolved', publicNote: 'Fixed.', version: 2 })
+        .success,
+    ).toBe(true);
+  });
+
+  it.each([
+    ['closing without a note', { status: 'resolved', version: 2 }],
+    ['dismissing with a blank note', { status: 'dismissed', publicNote: '   ', version: 2 }],
+    ['no version', { status: 'in_review' }],
+    ['version 0', { status: 'in_review', version: 0 }],
+    ['an unknown status', { status: 'closed', version: 1 }],
+    [
+      'an updatedAt sent by the client',
+      { status: 'in_review', version: 1, updatedAt: '2026-01-01T00:00:00Z' },
+    ],
+  ])('rejects %s', (_label, change) => {
+    expect(ReportStatusChangeSchema.safeParse(change).success).toBe(false);
+  });
+});
+
+describe('REPORT_TRANSITIONS', () => {
+  it('leaves the final statuses without exits', () => {
+    expect(REPORT_TRANSITIONS.resolved).toEqual([]);
+    expect(REPORT_TRANSITIONS.dismissed).toEqual([]);
   });
 });
 

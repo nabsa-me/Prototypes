@@ -20,6 +20,7 @@
     statusColors,
   } from './report-layer.ts';
   import { CATEGORY_LABEL, STATUS_LABEL, STATUS_TONE, formatDateTime } from './report-texts.ts';
+  import StatusChangeForm from './StatusChangeForm.svelte';
 
   interface Props {
     token: string;
@@ -38,6 +39,9 @@
   let visibleOnly = $state(false);
   /** Bumped when the map stops moving, so the "visible area" filter refetches. */
   let viewChanges = $state(0);
+  /** Bumped to reload the list after a conflict. */
+  let reloads = $state(0);
+  let changeNotice = $state<string>();
 
   let reports = $state.raw<ReportAdminView[]>([]);
   let listState = $state<'loading' | 'ready' | 'error'>('loading');
@@ -74,6 +78,7 @@
         });
         map.on('click', REPORTS_LAYER, (event) => {
           selected = codeAt(event);
+          changeNotice = undefined;
         });
         map.on('moveend', () => {
           if (visibleOnly) viewChanges++;
@@ -96,6 +101,7 @@
   $effect(() => {
     const status = statusFilter || undefined;
     void viewChanges;
+    void reloads;
     const map = viewer?.map;
     if (visibleOnly && !map) return;
     const bbox = visibleOnly && map ? visibleBounds(map) : undefined;
@@ -142,6 +148,7 @@
 
   function choose(report: ReportAdminView) {
     selected = report.code;
+    changeNotice = undefined;
     const map = viewer?.map;
     if (!map) return;
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -237,6 +244,22 @@
             { term: 'Última actualització', value: formatDateTime(selectedReport.updatedAt) },
           ]}
         />
+        {#if changeNotice}<Notice>{changeNotice}</Notice>{/if}
+        {#key selectedReport.code}
+          <StatusChangeForm
+            report={selectedReport}
+            {token}
+            onchanged={(updated) => {
+              reports = reports.map((report) => (report.code === updated.code ? updated : report));
+              changeNotice = `Estat actualitzat: ${STATUS_LABEL[updated.status]}.`;
+            }}
+            onconflict={() => {
+              changeNotice = undefined;
+              reloads++;
+            }}
+            {onunauthorized}
+          />
+        {/key}
       </section>
     {/if}
   </aside>

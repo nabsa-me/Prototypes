@@ -1,4 +1,10 @@
-import { ReportListSchema, type ReportAdminView, type ReportStatus } from '@fita/contracts';
+import {
+  ReportAdminViewSchema,
+  ReportListSchema,
+  type ReportAdminView,
+  type ReportStatus,
+  type ReportStatusChange,
+} from '@fita/contracts';
 import type { BBox } from '@fita/geo';
 import { requestJson } from '../../http.ts';
 
@@ -30,4 +36,16 @@ export async function fetchAdminReports(
     },
   );
   return reports;
+}
+
+export function changeReportStatus(
+  token: string,
+  code: string,
+  change: ReportStatusChange,
+): Promise<ReportAdminView> {
+  return requestJson(`/api/admin/reports/${encodeURIComponent(code)}`, ReportAdminViewSchema, {
+    method: 'PATCH',
+    body: change,
+    headers: { 'x-admin-token': token },
+  });
 }

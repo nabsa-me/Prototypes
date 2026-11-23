@@ -14,6 +14,7 @@ describe('listReports', () => {
         filters.push(filter);
         return [report];
       },
+      update: () => false,
     };
 
     const result = listReports({ store }, { status: 'open', bbox: [0, 40, 4, 43] });

@@ -23,6 +23,11 @@ export interface ReportStore {
   findByCode(code: string): Report | undefined;
   /** Newest first. */
   list(filter: ReportFilter): Report[];
+  /**
+   * Writes status, note, time and version only if the stored version is still
+   * `expectedVersion`. Returns false when it is not (someone else changed it).
+   */
+  update(report: Report, expectedVersion: number): boolean;
 }
 
 export type Clock = () => Date;

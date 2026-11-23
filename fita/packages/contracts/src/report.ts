@@ -64,3 +64,33 @@ export const ReportListQuerySchema = z.strictObject({
 
 export const ReportListSchema = z.strictObject({ reports: z.array(ReportAdminViewSchema) });
 export type ReportList = z.infer<typeof ReportListSchema>;
+
+/** Allowed moves: open → in_review → resolved | dismissed, and open → dismissed. */
+export const REPORT_TRANSITIONS: Readonly<Record<ReportStatus, readonly ReportStatus[]>> = {
+  open: ['in_review', 'dismissed'],
+  in_review: ['resolved', 'dismissed'],
+  resolved: [],
+  dismissed: [],
+};
+
+/** Final statuses: no way out, and reaching one requires a public note. */
+export const FINAL_STATUSES: readonly ReportStatus[] = ['resolved', 'dismissed'];
+
+export const PUBLIC_NOTE_MAX_LENGTH = 1000;
+
+export const ReportStatusChangeSchema = z
+  .strictObject({
+    status: ReportStatusSchema,
+    publicNote: z
+      .string()
+      .max(PUBLIC_NOTE_MAX_LENGTH)
+      .refine((note) => note.trim().length > 0, { message: 'Must not be blank' })
+      .optional(),
+    /** The version the client read; the change is refused if the report moved on. */
+    version: z.number().int().min(1),
+  })
+  .refine((change) => !FINAL_STATUSES.includes(change.status) || change.publicNote !== undefined, {
+    message: 'A public note is required to resolve or dismiss a report',
+    path: ['publicNote'],
+  });
+export type ReportStatusChange = z.infer<typeof ReportStatusChangeSchema>;

@@ -38,6 +38,13 @@ export function createSqliteReportStore(db: DatabaseSync): ReportStore {
     ${NEWEST_FIRST}
   `);
 
+  // Compare-and-set: the WHERE on version makes the check and the write one atomic step.
+  const updateStatus = db.prepare(`
+    UPDATE reports
+    SET status = :status, public_note = :publicNote, updated_at = :updatedAt, version = :version
+    WHERE code = :code AND version = :expectedVersion
+  `);
+
   return {
     insert(report) {
       const [lon, lat] = report.location;
@@ -81,6 +88,18 @@ export function createSqliteReportStore(db: DatabaseSync): ReportStore {
           })
         : selectAll.all({ status: status ?? null });
       return (rows as unknown as ReportRow[]).map(toReport);
+    },
+
+    update(report, expectedVersion) {
+      const { changes } = updateStatus.run({
+        code: report.code,
+        status: report.status,
+        publicNote: report.publicNote,
+        updatedAt: report.updatedAt,
+        version: report.version,
+        expectedVersion,
+      });
+      return changes === 1;
     },
   };
 }

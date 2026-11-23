@@ -16,7 +16,7 @@ describe('admin report routes', () => {
     ({ db, dispose } = openTestDatabase());
     const store = createSqliteReportStore(db);
     store.insert(aReport({ code: 'FIT-BBBBBB', location: [2.1701, 41.387] }));
-    store.insert(aReport({ code: 'FIT-LLLLLL', location: [0.62, 41.6176], status: 'in_review' }));
+    store.insert(aReport({ code: 'FIT-KKKKKK', location: [0.62, 41.6176], status: 'in_review' }));
   });
 
   afterEach(() => {
@@ -53,7 +53,7 @@ describe('admin report routes', () => {
 
       expect(response.statusCode).toBe(200);
       const { reports } = response.json<{ reports: Array<Record<string, unknown>> }>();
-      expect(reports.map((r) => r['code']).sort()).toEqual(['FIT-BBBBBB', 'FIT-LLLLLL']);
+      expect(reports.map((r) => r['code']).sort()).toEqual(['FIT-BBBBBB', 'FIT-KKKKKK']);
       expect(reports[0]).toHaveProperty('location');
       expect(reports[0]).toHaveProperty('version', 1);
     });
@@ -72,7 +72,7 @@ describe('admin report routes', () => {
 
       expect(
         byStatus.json<{ reports: Array<{ code: string }> }>().reports.map((r) => r.code),
-      ).toEqual(['FIT-LLLLLL']);
+      ).toEqual(['FIT-KKKKKK']);
       expect(
         byBbox.json<{ reports: Array<{ code: string }> }>().reports.map((r) => r.code),
       ).toEqual(['FIT-BBBBBB']);
@@ -90,6 +90,91 @@ describe('admin report routes', () => {
         expect(response.statusCode).toBe(400);
       },
     );
+  });
+
+  describe('PATCH /api/admin/reports/:code', () => {
+    const patch = (
+      code: string,
+      payload: Record<string, unknown>,
+      headers: Record<string, string> = auth,
+    ) => app().inject({ method: 'PATCH', url: `/api/admin/reports/${code}`, headers, payload });
+
+    it('answers 401 without the token and changes nothing', async () => {
+      const response = await patch('FIT-BBBBBB', { status: 'in_review', version: 1 }, {});
+
+      expect(response.statusCode).toBe(401);
+      expect(db.prepare("SELECT status FROM reports WHERE code = 'FIT-BBBBBB'").get()).toEqual({
+        status: 'open',
+      });
+    });
+
+    it('moves the report and answers it with the next version', async () => {
+      const response = await patch('FIT-BBBBBB', {
+        status: 'in_review',
+        publicNote: 'We are checking it.',
+        version: 1,
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(response.json()).toMatchObject({
+        code: 'FIT-BBBBBB',
+        status: 'in_review',
+        publicNote: 'We are checking it.',
+        updatedAt: '2026-11-23T10:00:00.000Z',
+        version: 2,
+      });
+    });
+
+    it('shows the public note to whoever holds the code', async () => {
+      await patch('FIT-KKKKKK', { status: 'resolved', publicNote: 'Fixed.', version: 1 });
+
+      const publicView = await app().inject({ method: 'GET', url: '/api/reports/FIT-KKKKKK' });
+
+      expect(publicView.json()).toMatchObject({ status: 'resolved', publicNote: 'Fixed.' });
+    });
+
+    it('answers 409 for a stale version', async () => {
+      await patch('FIT-BBBBBB', { status: 'in_review', version: 1 });
+
+      const response = await patch('FIT-BBBBBB', {
+        status: 'dismissed',
+        publicNote: 'Dup.',
+        version: 1,
+      });
+
+      expect(response.statusCode).toBe(409);
+      expect(response.json()).toMatchObject({ error: { code: 'version_conflict' } });
+    });
+
+    it('answers 409 for a move the state machine forbids', async () => {
+      const response = await patch('FIT-BBBBBB', {
+        status: 'resolved',
+        publicNote: 'x',
+        version: 1,
+      });
+
+      expect(response.statusCode).toBe(409);
+      expect(response.json()).toMatchObject({ error: { code: 'invalid_transition' } });
+    });
+
+    it('answers 404 for an unknown code', async () => {
+      const response = await patch('FIT-222222', { status: 'in_review', version: 1 });
+
+      expect(response.statusCode).toBe(404);
+    });
+
+    it.each([
+      ['closing without a note', { status: 'dismissed', version: 1 }],
+      [
+        'fields the server owns',
+        { status: 'in_review', version: 1, updatedAt: '2020-01-01T00:00:00Z' },
+      ],
+      ['no version', { status: 'in_review' }],
+    ])('answers 400 for %s', async (_label, payload) => {
+      const response = await patch('FIT-BBBBBB', payload);
+
+      expect(response.statusCode).toBe(400);
+    });
   });
 
   it('leaves public routes open', async () => {
