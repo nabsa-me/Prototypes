@@ -4,6 +4,7 @@
   import Button from '../../design-system/Button.svelte';
   import Notice from '../../design-system/Notice.svelte';
   import RadioGroup from '../../design-system/RadioGroup.svelte';
+  import CursorPosition from './CursorPosition.svelte';
   import { loadViewerConfig } from '../../map/load-viewer-config.ts';
   import { createViewerMap, type ViewerMap } from '../../map/viewer-map.ts';
 
@@ -76,17 +77,24 @@
       <h1>{load.config.title}</h1>
     </header>
 
-    <div class="overlay bottom-left controls">
-      <RadioGroup
-        legend="Capa base"
-        name="basemap"
-        hideLegend
-        options={load.config.basemaps.map((b) => ({ value: b.id, label: b.label }))}
-        bind:value={basemapId}
-      />
-      {#if load.config.terrain}
-        <Button pressed={tilted} onclick={toggleTilt} aria-label="Vista inclinada en 3D">3D</Button>
+    <div class="overlay bottom-left">
+      {#if viewer}
+        <CursorPosition map={viewer.map} />
       {/if}
+      <div class="controls">
+        <RadioGroup
+          legend="Capa base"
+          name="basemap"
+          hideLegend
+          options={load.config.basemaps.map((b) => ({ value: b.id, label: b.label }))}
+          bind:value={basemapId}
+        />
+        {#if load.config.terrain}
+          <Button pressed={tilted} onclick={toggleTilt} aria-label="Vista inclinada en 3D">
+            3D
+          </Button>
+        {/if}
+      </div>
     </div>
   {/if}
 </div>
@@ -116,6 +124,10 @@
   .bottom-left {
     bottom: var(--space-4);
     left: var(--space-3);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
   }
 
   /* On narrow screens the attribution takes the full width, so controls sit above it. */
